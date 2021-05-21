@@ -1,9 +1,6 @@
 package TEngine
 
 import (
-	"fmt"
-	"time"
-
 	Layout "github.com/Dorbmon/GoLayout"
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -70,29 +67,29 @@ func (z *Window) SetBody(body Widget) error {
 	z.body = body
 	return nil
 }
-func (z *Window) Run() error {
-	sdl.Main(func() {
-		running := true
-		for running {
-			sdl.Do(func() {
-				for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-					switch event.(type) {
-					case *sdl.QuitEvent:
-						running = false
-					case *sdl.MouseButtonEvent:
 
-					}
-				}
-			})
-			t := time.Now()
-			if err := z.Render(); err != nil {
-				return
-			}
-			t1 := time.Now()
-			fmt.Println("render cost:", t1.Sub(t).Milliseconds())
-			sdl.Delay(1000 / z.frameRate)
-		}
-	})
-
-	return nil
+func (z *Window) onMouseButton(event *sdl.MouseButtonEvent) {
+	var button int
+	switch event.Button {
+	case sdl.BUTTON_LEFT:
+		button = ButtonLeft
+	case sdl.BUTTON_MIDDLE:
+		button = ButtonMid
+	case sdl.BUTTON_RIGHT:
+		button = ButtonRight
+	case sdl.BUTTON_X1:
+		button = ButtonX1
+	case sdl.BUTTON_X2:
+		button = ButtonX2
+	}
+	var state int
+	switch event.State {
+	case sdl.RELEASED:
+		state = MouseRelease
+	case sdl.PRESSED:
+		state = MousePress
+	}
+	if body := z.body.(Hitable); body != nil {
+		body.OnHit(HitPositon{X: event.X, Y: event.Y}, button, state)
+	}
 }

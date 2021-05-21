@@ -8,6 +8,7 @@ import (
 
 func main() {
 	sdl.Init(sdl.INIT_EVERYTHING)
+	app, _ := TEngine.NewApp()
 	window, err := TEngine.NewWindow("Rx-TEngine", sdl.Rect{X: 0, Y: 0, W: 500, H: 200})
 	if err != nil {
 		panic(err)
@@ -18,5 +19,6 @@ func main() {
 	vbox.Append(block)
 	block2 := TEngine.NewRect(500, 100, TEngine.NewColorFromHex(0xFFFFF, 255))
 	vbox.Append(block2)
-	window.Run()
+	app.AddWindow(window)
+	app.Run()
 }
