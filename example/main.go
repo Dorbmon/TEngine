@@ -1,15 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"TEngine"
 
-	TEngine ".."
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 func main() {
-	_, err := TEngine.NewApp()
+	sdl.Init(sdl.INIT_EVERYTHING)
+	window, err := TEngine.NewWindow("Rx-TEngine", sdl.Rect{X: 0, Y: 0, W: 500, H: 200})
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
+	vbox := TEngine.NewVBox()
+	window.SetBody(vbox)
+	block := TEngine.NewRect(500, 100, TEngine.NewColorFromHex(0xCF143F, 255))
+	vbox.Append(block)
+	block2 := TEngine.NewRect(500, 100, TEngine.NewColorFromHex(0xFFFFF, 255))
+	vbox.Append(block2)
+	window.Run()
 }

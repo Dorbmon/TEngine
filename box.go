@@ -1,6 +1,8 @@
 package TEngine
 
-import Layout "github.com/Dorbmon/GoLayout"
+import (
+	Layout "github.com/Dorbmon/GoLayout"
+)
 
 type Box struct {
 	v        bool //VBox or HBox
@@ -50,9 +52,7 @@ func (z *Box) PassRenderer(renderer *Renderer) {
 }
 func (z *Box) Render() error {
 	for _, item := range z.children {
-		if err := item.Render(); err != nil {
-			return err
-		}
+		item.Render()
 	}
 	return nil
 }

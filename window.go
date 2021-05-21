@@ -1,17 +1,21 @@
 package TEngine
 
 import (
+	"fmt"
+	"time"
+
 	Layout "github.com/Dorbmon/GoLayout"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 type Window struct {
-	win      *sdl.Window
-	renderer *sdl.Renderer
-	rRender  *Renderer
-	body     Widget
-	layout   Layout.Context
-	root     Layout.LayItem
+	win       *sdl.Window
+	renderer  *sdl.Renderer
+	rRender   *Renderer
+	body      Widget
+	layout    Layout.Context
+	root      Layout.LayItem
+	frameRate uint32
 }
 
 func (z *Window) SetTitle(Title string) {
@@ -30,7 +34,8 @@ func NewWindow(Title string, Data sdl.Rect) (*Window, error) {
 	if err != nil {
 		return nil, err
 	}
-	ret := &Window{win: win, renderer: renderer, rRender: NewRenderer(renderer, 0, 0, 0, 0), layout: Layout.NewLayout()}
+	rRender := NewRenderer(renderer, 0, 0, 0, 0)
+	ret := &Window{win: win, renderer: renderer, rRender: rRender, layout: Layout.NewLayout(), frameRate: 60}
 	ret.layout.ReserveItemsCapacity(1000)
 	ret.root = Layout.NewLayItem(&ret.layout)
 	ret.root.SetContain(Layout.LayRow)
@@ -50,29 +55,44 @@ func (z *Window) Render() error {
 	z.root.SetSizeXY(z.win.GetSize())
 	z.layout.Calculate()
 	z.body.PassRenderer(z.rRender)
+	sdl.Do(func() {
+		z.renderer.Clear()
+	})
 	z.body.Render()
-	z.renderer.Present()
+	sdl.Do(func() {
+		z.renderer.Present()
+	})
 	return nil
 }
 func (z *Window) SetBody(body Widget) error {
 	w, h := z.win.GetSize()
 	z.rRender.Resize(0, 0, w, h)
 	z.body = body
-	return z.Render()
+	return nil
 }
 func (z *Window) Run() error {
-	running := true
-	for running {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				running = false
+	sdl.Main(func() {
+		running := true
+		for running {
+			sdl.Do(func() {
+				for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+					switch event.(type) {
+					case *sdl.QuitEvent:
+						running = false
+					case *sdl.MouseButtonEvent:
+
+					}
+				}
+			})
+			t := time.Now()
+			if err := z.Render(); err != nil {
+				return
 			}
+			t1 := time.Now()
+			fmt.Println("render cost:", t1.Sub(t).Milliseconds())
+			sdl.Delay(1000 / z.frameRate)
 		}
-		if err := z.Render(); err != nil {
-			return err
-		}
-		sdl.Delay(16)
-	}
+	})
+
 	return nil
 }
