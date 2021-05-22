@@ -61,3 +61,6 @@ func (z *Renderer) Release() {
 	z.render.Destroy()
 	renderers.Put(z)
 }
+func (z *Renderer) DrawText() {
+
+}

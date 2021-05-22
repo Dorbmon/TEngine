@@ -35,7 +35,7 @@ func NewWindow(Title string, Data sdl.Rect) (*Window, error) {
 	ret := &Window{win: win, renderer: renderer, rRender: rRender, layout: Layout.NewLayout(), frameRate: 60}
 	ret.layout.ReserveItemsCapacity(1000)
 	ret.root = Layout.NewLayItem(&ret.layout)
-	ret.root.SetContain(Layout.LayRow)
+	ret.root.SetContain(Layout.LayColumn)
 	ret.root.SetSizeXY(Data.W, Data.H)
 	return ret, nil
 }
@@ -43,16 +43,17 @@ func (z *Window) Render() error {
 	if z.body == nil {
 		return nil
 	}
-	z.layout.Destroy()
-	z.layout = Layout.NewLayout()
+	z.layout.Reset()
+	//z.layout = Layout.NewLayout()
 	z.layout.ReserveItemsCapacity(1000)
 	z.root = Layout.NewLayItem(&z.layout)
-	z.root.SetContain(Layout.LayRow)
+	z.root.SetContain(Layout.LayColumn)
 	z.root.Insert(z.body.Layout(&z.layout))
 	z.root.SetSizeXY(z.win.GetSize())
 	z.layout.Calculate()
 	z.body.PassRenderer(z.rRender)
 	sdl.Do(func() {
+		z.renderer.SetDrawColor(255, 0, 0, 255)
 		z.renderer.Clear()
 	})
 	z.body.Render()
@@ -89,7 +90,5 @@ func (z *Window) onMouseButton(event *sdl.MouseButtonEvent) {
 	case sdl.PRESSED:
 		state = MousePress
 	}
-	if body := z.body.(Hitable); body != nil {
-		body.OnHit(HitPositon{X: event.X, Y: event.Y}, button, state)
-	}
+	z.body.OnHit(HitPositon{X: int(event.X), Y: int(event.Y)}, button, state)
 }

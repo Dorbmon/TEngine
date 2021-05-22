@@ -1,33 +1,33 @@
 package TEngine
 
-import (
-	Layout "github.com/Dorbmon/GoLayout"
-)
+import Layout "github.com/Dorbmon/GoLayout"
 
-type Rect struct {
+type Text struct {
 	RWidget
 	w, h     int32
+	word     string
 	renderer *Renderer
 	item     Layout.LayItem
-	color    RColor
 }
 
-func NewRect(w, h int32, color RColor) *Rect {
-	return &Rect{w: w, h: h, color: color}
+func NewText(word string) *Text {
+	ret := &Text{
+		word: word,
+	}
+	return ret
 }
-
-func (z *Rect) Layout(ctx *Layout.Context) *Layout.LayItem {
+func (z *Text) Layout(ctx *Layout.Context) *Layout.LayItem {
 	z.item = Layout.NewLayItem(ctx)
 	z.item.SetSizeXY(z.w, z.h)
 	z.RWidget.SetLay(&z.item)
 	return &z.item
 }
-func (z *Rect) PassRenderer(renderer *Renderer) {
+func (z *Text) PassRenderer(renderer *Renderer) {
 	z.renderer = renderer
 	rect := z.item.GetRect()
 	z.renderer.UpdateOffset(int32(rect.X1), int32(rect.Y1))
 }
-func (z *Rect) Render() error {
+func (z *Text) Render() error {
 	z.renderer.SetDrawColor(z.color)
 	z.renderer.FillRect(0, 0, z.w, z.h)
 	return nil

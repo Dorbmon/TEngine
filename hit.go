@@ -1,7 +1,7 @@
 package TEngine
 
 type HitPositon struct {
-	X, Y int32
+	X, Y int
 }
 
 const (
@@ -15,7 +15,3 @@ const (
 	MouseRelease = iota
 	MousePress
 )
-
-type Hitable interface {
-	OnHit(Position HitPositon, HitButton int, State int) bool
-}

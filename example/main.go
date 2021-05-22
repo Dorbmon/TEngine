@@ -2,6 +2,7 @@ package main
 
 import (
 	"TEngine"
+	"fmt"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -16,8 +17,14 @@ func main() {
 	vbox := TEngine.NewVBox()
 	window.SetBody(vbox)
 	block := TEngine.NewRect(500, 100, TEngine.NewColorFromHex(0xCF143F, 255))
+	block.OnClick(func() {
+		fmt.Println("Got Click On block")
+	})
 	vbox.Append(block)
 	block2 := TEngine.NewRect(500, 100, TEngine.NewColorFromHex(0xFFFFF, 255))
+	block2.OnClick(func() {
+		fmt.Println("Got Click On block2")
+	})
 	vbox.Append(block2)
 	app.AddWindow(window)
 	app.Run()

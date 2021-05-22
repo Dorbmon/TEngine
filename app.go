@@ -6,7 +6,6 @@ import (
 
 type App struct {
 	Title     string
-	render    *sdl.Renderer
 	wins      map[uint32]*Window
 	FrameRate uint32
 }
@@ -29,11 +28,10 @@ func (z *App) Run() {
 		for running {
 			sdl.Do(func() {
 				for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-					switch event.(type) {
+					switch e := event.(type) {
 					case *sdl.QuitEvent:
 						running = false
 					case *sdl.MouseButtonEvent:
-						e := event.(*sdl.MouseButtonEvent)
 						z.wins[e.WindowID].onMouseButton(e)
 					}
 				}
